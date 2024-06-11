@@ -1,7 +1,6 @@
 package com.gopi.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +27,7 @@ public class UserController {
 	private UserService userService;
 	
 	@PostMapping("/createUser")
-	public ResponseEntity<UserResponseDto> createUser(@RequestBody UserCreateDto userCreateDto){
+	public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto){
 		UserResponseDto createdUser =userService.createUser(userCreateDto);
 		return ResponseEntity.status(201).body(createdUser);
 		

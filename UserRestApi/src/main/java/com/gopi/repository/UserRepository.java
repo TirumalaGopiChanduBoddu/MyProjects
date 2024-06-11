@@ -10,4 +10,7 @@ import com.gopi.entity.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	public User findByUserNameAndEmail(String userName , String email);
+	
+	public User findByEmail(String email);
+	
 }

@@ -10,6 +10,8 @@ import com.gopi.dto.UserCreateDto;
 import com.gopi.dto.UserResponseDto;
 import com.gopi.dto.UserUpdateDto;
 import com.gopi.entity.User;
+import com.gopi.exception.EmailAlreadyExistsException;
+import com.gopi.exception.ResourceNotFoundException;
 import com.gopi.repository.UserRepository;
 import com.gopi.service.UserService;
 
@@ -21,6 +23,11 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public UserResponseDto createUser(UserCreateDto createUser) {
+		User userByEmail = userRepository.findByEmail(createUser.getEmail());
+		if(userByEmail != null) {
+			throw new EmailAlreadyExistsException("This Email already Exists for a User");
+		}
+		
 		User user = new User();
 		user.setUserName(createUser.getUsername());
 		user.setFirstName(createUser.getFirstName());
@@ -33,6 +40,7 @@ public class UserServiceImpl implements UserService {
 		user.setPhoneNumber(createUser.getPhoneNumber());
 		
 		User savedUser =userRepository.save(user);
+		
 		
 		return convertUserToUserResponseDto(savedUser) ;
 	}
@@ -51,14 +59,14 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseDto getUserByID(Long id) {
-		User user =userRepository.findById(id).get();
+		User user =userRepository.findById(id).orElseThrow(() ->  new ResourceNotFoundException("User not Found with Id "+ id));
 		UserResponseDto userResponseDto = convertUserToUserResponseDto(user);
 		return userResponseDto;
 	}
 	
 	@Override
 	public UserResponseDto updateUser(Long id ,  UserUpdateDto userUpdateDto) {
-		User user = userRepository.findById(id).get();
+		User user = userRepository.findById(id).orElseThrow(() ->  new ResourceNotFoundException("User not Found with Id "+ id));
 		
         if (userUpdateDto.getEmail() != null) 
         	user.setEmail(userUpdateDto.getEmail());
